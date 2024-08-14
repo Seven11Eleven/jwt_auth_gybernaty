@@ -3,8 +3,8 @@ package domain
 import "context"
 
 type LoginRequest struct {
-	Username string
-	Password string
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type LoginResponse struct {

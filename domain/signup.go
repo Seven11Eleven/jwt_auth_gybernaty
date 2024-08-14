@@ -3,8 +3,8 @@ package domain
 import "context"
 
 type SignUpRequest struct {
-	Username string
-	Password string
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type SignUpResponse struct {
@@ -13,6 +13,8 @@ type SignUpResponse struct {
 }
 
 type SignUpService interface {
+	CheckUsernameExists(ctx context.Context, username string) (bool, error)
+
 	Create(ctx context.Context, author *Author) error
 	GetUserByUsername(ctx context.Context, username string) (*Author, error)
 	CreateAccessToken(author *Author, expired int) (accessToken string, err error)

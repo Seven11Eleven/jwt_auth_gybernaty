@@ -25,4 +25,11 @@ var (
 
 	//http status code - 404 Not Found
 	ErrArticleNotFound = errors.New("article not found")
+
+	// http status code - 401 Unathorized Request https://www.webnots.com/4xx-http-status-codes/
+	ErrInvalidCredentials = errors.New("invalid credentials")
+	// http status code - 401 Unathorized Request
+	ErrInvalidToken = errors.New("invalid token")
+
+	ErrTokenCreation = errors.New("token creation error")
 )

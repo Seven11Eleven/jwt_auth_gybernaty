@@ -1,10 +1,16 @@
 package domain
 
-import "context"
+import (
+	"context"
 
-type RefreshToken struct {
-	RefreshToken string `binding:"required"`
+	"github.com/google/uuid"
+)
+
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refreshToken"`
 }
+
+
 
 type RefreshTokenResponse struct {
 	AccessToken  string `json:"accessToken"`
@@ -12,8 +18,8 @@ type RefreshTokenResponse struct {
 }
 
 type RefreshTokenService interface {
-	GetAuthorByID(ctx context.Context, id string) (Author, error)
+	GetAuthorByID(ctx context.Context, id uuid.UUID) (*Author, error)
 	CreateAccessToken(author *Author, expired int) (accessToken string, err error)
 	CreateRefreshToken(author *Author, expired int) (refreshToken string, err error)
-	ExtractIDFromToken(tokenRequested string) (string, error)
+	ExtractIDFromToken(tokenRequested string) (uuid.UUID, error)
 }
