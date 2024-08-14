@@ -1,4 +1,4 @@
-package app
+package config
 
 import (
 	"log"
@@ -16,6 +16,7 @@ type Env struct {
 	JWTSecret              string `mapstructure:"JWT_SECRET"`
 	AccessTokenExpiryHour  int    `mapstructure:"ACCESS_EXPIRY_HOUR"`
 	RefreshTokenExpiryHour int    `mapstructure:"REFRESH_EXPIRY_HOUR"`
+	LocalParam             string `mapstructure:"LOCAL_PARAM_SALT"`
 }
 
 func NewEnv() *Env {

@@ -7,9 +7,17 @@ import (
 
 	"github.com/Seven11Eleven/jwt_auth_gybernaty/domain"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 var secret = os.Getenv("JWT_SECRET")
+
+type JWTUtils interface {
+	CreateAccessToken(author *domain.Author, expired int) (string, error)
+	CreateRefreshToken(author *domain.Author, expired int) (string, error)
+	IsAuthorized(requestedToken string) (bool, error)
+	ExtractIDFromToken(requestedToken string) (uuid.UUID, error)
+}
 
 func CreateAccessToken(author *domain.Author, expired int) (accessToken string, err error) {
 
@@ -68,7 +76,7 @@ func IsAuthorized(requestedToken string) (bool, error) {
 	return true, nil
 }
 
-func ExtractIDFromToken(requestedToken string) (string, error) {
+func ExtractIDFromToken(requestedToken string) (uuid.UUID, error) {
 	token, err := jwt.Parse(requestedToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -77,14 +85,39 @@ func ExtractIDFromToken(requestedToken string) (string, error) {
 	})
 
 	if err != nil {
-		return "", err
+		return uuid.Nil, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if !ok && !token.Valid {
-		return "", fmt.Errorf("invalid token")
+		return uuid.Nil, fmt.Errorf("invalid token")
 	}
+	id := claims["id"].(string)
+	uuid := uuid.MustParse(id)
+	return uuid, nil
+}
 
-	return claims["id"].(string), nil
+type jwtUtilsImpl struct{
+
+}
+
+func NewJWTUtils() JWTUtils {
+	return &jwtUtilsImpl{}
+}
+
+func (u *jwtUtilsImpl) CreateAccessToken(author *domain.Author, expired int) (string, error) {
+	return CreateAccessToken(author, expired)
+}
+
+func (u *jwtUtilsImpl) CreateRefreshToken(author *domain.Author, expired int) (string, error) {
+	return CreateRefreshToken(author, expired)
+}
+
+func (u *jwtUtilsImpl) IsAuthorized(requestedToken string) (bool, error) {
+	return IsAuthorized(requestedToken)
+}
+
+func (u *jwtUtilsImpl) ExtractIDFromToken(requestedToken string) (uuid.UUID, error) {
+	return ExtractIDFromToken(requestedToken)
 }

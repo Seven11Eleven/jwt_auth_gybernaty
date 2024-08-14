@@ -1,4 +1,4 @@
-package app
+package database
 
 import (
 	"context"
@@ -6,10 +6,11 @@ import (
 	"log"
 	"time"
 
+	"github.com/Seven11Eleven/jwt_auth_gybernaty/internal/config"
 	"github.com/jackc/pgx/v5"
 )
 
-func NewPostgreSQLConnection(env *Env) *pgx.Conn {
+func NewPostgreSQLConnection(env *config.Env) *pgx.Conn {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
