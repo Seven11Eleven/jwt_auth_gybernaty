@@ -109,7 +109,6 @@ func (ar *authorPgxRepository) Fetch(ctx context.Context) ([]domain.AuthorRespon
 
 		authorIDStr := authorID.String()
 
-		// Создаём запись для автора, если её нет
 		if author, exists := authorsMap[authorIDStr]; exists {
 			if articleID != uuid.Nil {
 				author.Articles = append(author.Articles, domain.ArticleResponse{

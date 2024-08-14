@@ -46,5 +46,6 @@ USER appuser
 
 # Copy the built binary from the build stage
 COPY --from=build /bin/server /bin/server
+COPY ./migrations /migrations
 
 ENTRYPOINT ["/bin/server"]

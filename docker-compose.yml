@@ -1,18 +1,27 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:13
     environment:
       POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD} # Установите пароль для суперпользователя
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}     
       POSTGRES_DB: ${DATABASE_NAME}
     ports:
-      - "5432:5432" # Обратите внимание на правильный порт
+      - "5432:5432" 
     volumes:
       - db_data:/var/lib/postgresql/data
     command: ["postgres", "-c", "log_statement=all"]
-
+  
+  migrate:
+    image: migrate/migrate:v4.14.1
+    volumes:
+      - ./migrations:/migrations
+    entrypoint: [
+      "sh", "-c",
+      "until nc -z db 5432; do sleep 2; done; migrate -path=/migrations -database postgres://user:pass@db:5432/gybernaty?sslmode=disable up" #замените up на down с флагом -all, чтобы после запуска сервиса migrate он применил down  
+    ]
+    
+    depends_on:
+      - db
   app:
     build: .
     ports:
