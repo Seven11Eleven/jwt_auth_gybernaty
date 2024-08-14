@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"github.com/Seven11Eleven/jwt_auth_gybernaty/domain"
+	"github.com/google/uuid"
 )
 
 func isAlpha(str string) bool {
-	match, _ := regexp.MatchString(`^[A-Za-z]+$`, str)
+	match, _ := regexp.MatchString(`^[A-Za-z\s]+$`, str)
 	return match
 }
 
@@ -40,7 +41,7 @@ func (as *articleService) Create(ctx context.Context, article *domain.Article) e
 	}
 
 	article.CreatedAt = time.Now()
-	article.UpdatedAt = time.Now()
+	
 
 	c, cancel := context.WithTimeout(ctx, as.contextTimeout)
 	defer cancel()
@@ -48,7 +49,7 @@ func (as *articleService) Create(ctx context.Context, article *domain.Article) e
 }
 
 // FetchByUserID implements domain.ArticleService.
-func (as *articleService) FetchByUserID(ctx context.Context, userID string) ([]domain.Article, error) {
+func (as *articleService) FetchByUserID(ctx context.Context, userID uuid.UUID) ([]domain.ArticleResponse, error) {
 	c, cancel := context.WithTimeout(ctx, as.contextTimeout)
 	defer cancel()
 
@@ -65,7 +66,7 @@ func (as *articleService) FetchByUserID(ctx context.Context, userID string) ([]d
 }
 
 // GetByID implements domain.ArticleService.
-func (as *articleService) GetByID(ctx context.Context, artID string) (*domain.Article, error) {
+func (as *articleService) GetByID(ctx context.Context, artID uuid.UUID) (*domain.ArticleResponse, error) {
 	c, cancel := context.WithTimeout(ctx, as.contextTimeout)
 	defer cancel()
 

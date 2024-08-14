@@ -13,8 +13,23 @@ type signupService struct {
 	contextTimeout   time.Duration
 }
 
+// CheckUsernameExists implements domain.SignUpService.
+func (sus *signupService) CheckUsernameExists(ctx context.Context, username string) (bool, error) {
+	c, cancel := context.WithTimeout(ctx, time.Duration(sus.contextTimeout))
+	defer cancel()
+	exists, err := sus.authorRepository.CheckUsernameExists(c, username)
+	if err != nil {
+        return false, err
+    }
+    return exists, nil
+}
+
 // Create implements domain.SignUpService.
 func (sus *signupService) Create(ctx context.Context, author *domain.Author) error {
+	if !isAlpha(author.Username) {
+		return domain.ErrInvalidUsername
+	}
+	
 	c, cancel := context.WithTimeout(ctx, sus.contextTimeout)
 	defer cancel()
 	return sus.authorRepository.Create(c, author)
